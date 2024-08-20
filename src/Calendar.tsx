@@ -1,21 +1,77 @@
-import React, { useState, useRef, useEffect, MutableRefObject } from 'react';
-import { DayPilot, DayPilotCalendar, DayPilotNavigator } from "@daypilot/daypilot-lite-react";
+import React, { useRef, useEffect, MutableRefObject, useState } from 'react';
+import { DayPilot, DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import "./CalendarStyles.css";
+import Schedule from './Schedule';
+import { ISchedule } from './types';
 
 const styles = {
   wrap: {
-    display: "flex"
+    display: "flex",
+    marginTop: "10px"
   },
   left: {
-    marginRight: "10px"
+    marginRight: "10px",
+    width: "25%"
   },
   main: {
-    flexGrow: "1"
+    width: "70%"
   }
 };
 
+const testData: ISchedule[] =
+[{
+    source: "Gym",
+    events: [
+      {
+        id: 1,
+        text: "Test",
+        start: "2024-07-30T10:30:00",
+        end: "2024-07-30T12:30:00"
+      },
+      {
+        id: 2,
+        text: "Test2",
+        start: "2024-08-03T10:30:00",
+        end: "2024-08-03T12:30:00"
+      },
+    ]
+  },
+  {
+    source: "Esh",
+    events: [
+      {
+        id: 3,
+        text: "Test3",
+        start: "2024-07-30T10:30:00",
+        end: "2024-07-30T12:30:00"
+      },
+      {
+        id: 4,
+        text: "Test4",
+        start: "2024-08-03T10:30:00",
+        end: "2024-08-03T12:30:00"
+      },
+    ]
+  }
+]
+
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
+
+  const [enabledSchedules, setEnabledSchedules] = useState<string[]>([])
+
+  const toggleScheduleVisibility = (source: string) => {
+    const newArray = enabledSchedules.filter((x) => x !== source)
+    if (newArray.length === enabledSchedules.length) {
+      setEnabledSchedules([...enabledSchedules, source ]);
+    } else {
+      setEnabledSchedules(newArray)
+    }
+  }
+
+  const isScheduleVisible = (source: string) => {
+    return enabledSchedules.findIndex(sc => sc === source) >= 0;
+  }
 
   const editEvent = async (e: DayPilot.Event) => {
     const dp = calendarRef.current!.control;
@@ -25,7 +81,7 @@ const Calendar = () => {
     dp.events.update(e);
   };
 
-  const [calendarConfig, setCalendarConfig] = useState({
+  const calendarConfig = {
     viewType: "Week" as const,
     durationBarVisible: false,
     timeRangeSelectedHandling: "Enabled" as const,
@@ -91,62 +147,14 @@ const Calendar = () => {
           }
         }
       ];
-
-
-      const participants = args.data.participants;
-      if (participants > 0) {
-        // show one icon for each participant
-        for (let i = 0; i < participants; i++) {
-          args.data.areas.push({
-            bottom: 5,
-            right: 5 + i * 30,
-            width: 24,
-            height: 24,
-            action: "None",
-            image: `https://picsum.photos/24/24?random=${i}`,
-            style: "border-radius: 50%; border: 2px solid #fff; overflow: hidden;",
-          });
-        }
-      }
     }
-  });
+  };
 
   useEffect(() => {
-    const events = [
-      {
-        id: 1,
-        text: "Event 1",
-        start: "2023-10-02T10:30:00",
-        end: "2023-10-02T13:00:00",
-        participants: 2,
-      },
-      {
-        id: 2,
-        text: "Event 2",
-        start: "2023-10-03T09:30:00",
-        end: "2023-10-03T11:30:00",
-        backColor: "#6aa84f",
-        participants: 1,
-      },
-      {
-        id: 3,
-        text: "Event 3",
-        start: "2023-10-03T12:00:00",
-        end: "2023-10-03T15:00:00",
-        backColor: "#f1c232",
-        participants: 3,
-      },
-      {
-        id: 4,
-        text: "Event 4",
-        start: "2023-10-01T11:30:00",
-        end: "2023-10-01T14:30:00",
-        backColor: "#cc4125",
-        participants: 4,
-      },
-    ];
+    //TODO: get visible schedules, assign each unique color (do in list maybe?), alter visibility
+    const events = testData[0].events;
 
-    const startDate = "2023-10-02";
+    const startDate = "2024-07-28";
 
     calendarRef.current!.control.update({startDate, events});
   }, []);
@@ -154,18 +162,13 @@ const Calendar = () => {
   return (
     <div style={styles.wrap}>
       <div style={styles.left}>
-        <DayPilotNavigator
-          selectMode={"Week"}
-          showMonths={3}
-          skipMonths={3}
-          startDate={"2023-10-02"}
-          selectionDay={new DayPilot.Date("2023-10-02")}
-          onTimeRangeSelected={ args => {
-            calendarRef.current!.control.update({
-              startDate: args.day
-            });
-          }}
-        />
+        {testData.map(sch => (
+          <Schedule
+            data={sch}
+            key={sch.source}
+            isVisible={isScheduleVisible(sch.source)}
+            setIsVisible={() => toggleScheduleVisibility(sch.source)}/>
+        ))}
       </div>
       <div style={styles.main}>
         <DayPilotCalendar
