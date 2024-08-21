@@ -18,6 +18,7 @@ const styles = {
   }
 };
 
+// https://htmlcolorcodes.com/color-chart/
 const testData: ISchedule[] =
 [{
     source: "Gym",
@@ -44,8 +45,8 @@ const testData: ISchedule[] =
       {
         id: 3,
         text: "Test3",
-        start: "2024-07-31T10:30:00",
-        end: "2024-07-31T12:30:00"
+        start: "2024-07-31T14:00:00",
+        end: "2024-07-31T15:30:00"
       },
       {
         id: 4,
