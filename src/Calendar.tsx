@@ -4,20 +4,6 @@ import "./CalendarStyles.css";
 import Schedule from './Schedule';
 import { ISchedule } from './types';
 
-const styles = {
-  wrap: {
-    display: "flex",
-    marginTop: "10px"
-  },
-  left: {
-    marginRight: "10px",
-    width: "25%"
-  },
-  main: {
-    width: "70%"
-  }
-};
-
 // https://htmlcolorcodes.com/color-chart/
 const testData: ISchedule[] =
 [{
@@ -93,8 +79,8 @@ const Calendar = () => {
   }, [isScheduleVisible]);
 
   return (
-    <div style={styles.wrap}>
-      <div style={styles.left}>
+    <div className="body-wrapper">
+      <div className="schedule-list-wrapper">
         {testData.map(sch => (
           <Schedule
             data={sch}
@@ -103,7 +89,7 @@ const Calendar = () => {
             setIsVisible={() => toggleScheduleVisibility(sch.source)}/>
         ))}
       </div>
-      <div style={styles.main}>
+      <div className="calendar-wrapper">
         <DayPilotCalendar
           {...calendarConfig}
           ref={calendarRef}

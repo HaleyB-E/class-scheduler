@@ -1,24 +1,28 @@
 import React from 'react';
 import "./CalendarStyles.css";
 import { ISchedule } from './types';
+import Toggle from 'react-toggle';
+import "react-toggle/style.css";
 
 const Schedule = ({data, isVisible, setIsVisible}: {data: ISchedule, isVisible: boolean, setIsVisible: () => void}) => {
   const getFormattedEventDatetime = (eventDate: Date) => {
-    const date = eventDate.toDateString().slice(0,-5);
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+    const date = weekday[eventDate.getDay()];
     const time = eventDate.toLocaleTimeString().slice(0, -6);
     return `${date} @ ${time}`
   }
-  console.log(data)
+
   return (
-    <div>
-        <div style={{display:"inline-block"}}>
-            <h4 style={{display:"inline"}}>{data.source}</h4>
-            <input type="checkbox" checked={isVisible} onChange={setIsVisible}/>
-        </div>
-      <ul>
+    <div className="schedule-tile" style={{backgroundColor: data.color}}>
+      <div className="schedule-tile-header">
+        <Toggle className="visibility-toggle" type="checkbox" defaultChecked={isVisible} onChange={setIsVisible}/>
+        <h4>{data.source}</h4>
+      </div>
+      <ul className="schedule-tile-event-wrapper">
         {data.events.map(ev => 
           <li key={ev.id}>
-            {getFormattedEventDatetime(new Date(ev.start.toString()))}: {ev.text}
+            <b>{getFormattedEventDatetime(new Date(ev.start.toString()))}</b>: {ev.text}
           </li>
         )}
       </ul>

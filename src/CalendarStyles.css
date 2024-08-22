@@ -13,3 +13,49 @@
 .calendar_default_main {
     width: 50%;
 }
+
+.calendar-wrapper {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.body-wrapper {
+    display: flex;
+    margin-top: 10px;
+}
+
+.schedule-list-wrapper {
+    margin-right: 10px;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.schedule-tile {
+    background-color: #2e78d6;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.schedule-tile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h4 {
+        text-align: left;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}
+
+.visibility-toggle {
+    vertical-align: bottom;
+}
+
+.schedule-tile-event-wrapper {
+    margin-bottom: 5px;
+    padding-left: 20px;
+    li {
+        text-align: left;
+    }
+}
