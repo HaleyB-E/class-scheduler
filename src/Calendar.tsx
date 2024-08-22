@@ -2,47 +2,7 @@ import React, { useRef, useEffect, MutableRefObject, useState, useCallback } fro
 import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import "./CalendarStyles.css";
 import Schedule from './Schedule';
-import { ISchedule } from './types';
-
-// https://htmlcolorcodes.com/color-chart/
-const testData: ISchedule[] =
-[{
-    source: "Gym",
-    color: "#3498db",
-    events: [
-      {
-        id: 1,
-        text: "Test",
-        start: "2024-07-30T10:30:00",
-        end: "2024-07-30T12:30:00"
-      },
-      {
-        id: 2,
-        text: "Test2",
-        start: "2024-08-03T10:30:00",
-        end: "2024-08-03T12:30:00"
-      },
-    ]
-  },
-  {
-    source: "Esh",
-    color: "#eb984e",
-    events: [
-      {
-        id: 3,
-        text: "Test3",
-        start: "2024-07-31T14:00:00",
-        end: "2024-07-31T15:30:00"
-      },
-      {
-        id: 4,
-        text: "Test4",
-        start: "2024-08-02T10:30:00",
-        end: "2024-08-02T11:00:00"
-      },
-    ]
-  }
-]
+import { testData } from './Data';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
@@ -73,7 +33,12 @@ const Calendar = () => {
     const eventList = visibleSchedules.flatMap(sch => {
       return sch.events.map(ev => {return {...ev, backColor: sch.color}});
     })
-    const startDate = "2024-07-28";
+
+    // get today so we can show current week in the calendar
+    const startDateAsDate = new Date();
+    const month = (startDateAsDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = startDateAsDate.getDate().toString().padStart(2, "0");
+    const startDate = `${startDateAsDate.getFullYear()}-${month}-${day}`
 
     calendarRef.current!.control.update({startDate, events: eventList});
   }, [isScheduleVisible]);

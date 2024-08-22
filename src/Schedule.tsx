@@ -6,11 +6,7 @@ import "react-toggle/style.css";
 
 const Schedule = ({data, isVisible, setIsVisible}: {data: ISchedule, isVisible: boolean, setIsVisible: () => void}) => {
   const getFormattedEventDatetime = (eventDate: Date) => {
-    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-
-    const date = weekday[eventDate.getDay()];
-    const time = eventDate.toLocaleTimeString().slice(0, -6);
-    return `${date} @ ${time}`
+    return eventDate.toLocaleDateString('en-US', {weekday:'long', hour: 'numeric', minute: 'numeric'} );
   }
 
   return (
