@@ -2,12 +2,14 @@ import React, { useRef, useEffect, MutableRefObject, useState, useCallback } fro
 import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import "./CalendarStyles.css";
 import Schedule from './Schedule';
-import { testData } from './Data';
+import { getParsedData } from './Data';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
-
-  const [enabledSchedules, setEnabledSchedules] = useState<string[]>([])
+  getParsedData();
+  const [enabledSchedules, setEnabledSchedules] = useState<string[]>([]);
+  const allSchedules = getParsedData();
+  console.log(allSchedules)
 
   const toggleScheduleVisibility = (source: string) => {
     const newArray = enabledSchedules.filter((x) => x !== source)
@@ -23,30 +25,26 @@ const Calendar = () => {
   }, [enabledSchedules])
 
   const calendarConfig = {
-    viewType: "Week" as const,
+    viewType: "Days" as const,
+    days: 7,
     durationBarVisible: false
   };
 
   useEffect(() => {
-    const visibleSchedules = testData.filter(sch => isScheduleVisible(sch.source));
+    const visibleSchedules = allSchedules.filter(sch => isScheduleVisible(sch.source));
 
     const eventList = visibleSchedules.flatMap(sch => {
       return sch.events.map(ev => {return {...ev, backColor: sch.color}});
-    })
+    });
+    eventList.forEach(ev => console.log(ev))
 
-    // get today so we can show current week in the calendar
-    const startDateAsDate = new Date();
-    const month = (startDateAsDate.getMonth() + 1).toString().padStart(2, "0");
-    const day = startDateAsDate.getDate().toString().padStart(2, "0");
-    const startDate = `${startDateAsDate.getFullYear()}-${month}-${day}`
-
-    calendarRef.current!.control.update({startDate, events: eventList});
-  }, [isScheduleVisible]);
+    calendarRef.current!.control.update({events: eventList});
+  }, [isScheduleVisible, allSchedules]);
 
   return (
     <div className="body-wrapper">
       <div className="schedule-list-wrapper">
-        {testData.map(sch => (
+        {allSchedules.map(sch => (
           <Schedule
             data={sch}
             key={sch.source}
