@@ -6,10 +6,8 @@ import { getParsedData } from './Data';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
-  getParsedData();
   const [enabledSchedules, setEnabledSchedules] = useState<string[]>([]);
   const allSchedules = getParsedData();
-  console.log(allSchedules)
 
   const toggleScheduleVisibility = (source: string) => {
     const newArray = enabledSchedules.filter((x) => x !== source)
@@ -36,7 +34,6 @@ const Calendar = () => {
     const eventList = visibleSchedules.flatMap(sch => {
       return sch.events.map(ev => {return {...ev, backColor: sch.color}});
     });
-    eventList.forEach(ev => console.log(ev))
 
     calendarRef.current!.control.update({events: eventList});
   }, [isScheduleVisible, allSchedules]);

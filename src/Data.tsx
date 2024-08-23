@@ -12,13 +12,14 @@ export const getParsedData = (): ISchedule[] => {
 const convertToDayPilotDate = (date: string): DayPilot.Date => new DayPilot.Date(new Date(date),true);
 
 const getBoulderingProjectSchedule = (): ISchedule => {
-    const parsedBoulderingProjectData: DayPilot.EventData[] = boulderingProjectData.map(ev =>{
+    const parsedBoulderingProjectData: DayPilot.EventData[] = boulderingProjectData.map(ev => {
         return {
             id: ev.id,
             text: ev.name,
             description: ev.description,
             start: convertToDayPilotDate(ev.startTime),
-            end: convertToDayPilotDate(ev.endTime)
+            end: convertToDayPilotDate(ev.endTime),
+            toolTip: ev.description.replace(/(<([^>]+)>)/ig, '')
         }
     }).sort((x,y) => x.start.getTime() - y.start.getTime());
     return {
