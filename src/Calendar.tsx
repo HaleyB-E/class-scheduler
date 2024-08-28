@@ -3,11 +3,16 @@ import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
 import "./CalendarStyles.css";
 import Schedule from './Schedule';
 import { getParsedData } from './Data';
+import { ISchedule } from './types';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
   const [enabledSchedules, setEnabledSchedules] = useState<string[]>([]);
-  const allSchedules = getParsedData();
+  const [allSchedules, setAllSchedules] = useState<ISchedule[]>([]);
+
+  useEffect(() => {
+    getParsedData().then(resp => setAllSchedules(resp));
+  },[])
 
   const toggleScheduleVisibility = (source: string) => {
     const newArray = enabledSchedules.filter((x) => x !== source)
