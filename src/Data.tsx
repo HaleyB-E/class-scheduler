@@ -2,13 +2,15 @@ import { ISchedule } from "./types";
 // data folder not synced to github, add the file and paste scraped data into it
 import boulderingProjectData from "./data/boulderingproject.json";
 import eshData from "./data/esh.json";
+import flyTogetherData from "./data/flytogether.json";
 import { DayPilot } from "@daypilot/daypilot-lite-react";
 
 export const getParsedData = (): ISchedule[] => {
     const boulderingProjectSchedule = getBoulderingProjectSchedule();
     const eshSchedule = getEshSchedule();
+    const flyTogetherSchedule = getFlyTogetherSchedule();
 
-    return [boulderingProjectSchedule, eshSchedule];
+    return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
 
 const convertToDayPilotDate = (date: string): DayPilot.Date => new DayPilot.Date(new Date(date),true);
@@ -33,7 +35,6 @@ const getBoulderingProjectSchedule = (): ISchedule => {
 
 const getEshSchedule = (): ISchedule => {
     const parsedEshData: DayPilot.EventData[] = eshData.map(ev => {
-        console.log(ev)
         return {
             id: ev.id,
             text: ev.name.split('-')[0],
@@ -50,24 +51,20 @@ const getEshSchedule = (): ISchedule => {
     }
 }
 
-// https://htmlcolorcodes.com/color-chart/
-export const testData: ISchedule[] =
-[{
-    source: "Esh",
-    color: "#eb984e",
-    events: [
-      {
-        id: 3,
-        text: "Test3",
-        start: "2024-08-22T14:00:00",
-        end: "2024-08-22T15:30:00"
-      },
-      {
-        id: 4,
-        text: "Test4",
-        start: "2024-08-23T10:30:00",
-        end: "2024-08-23T11:00:00"
-      },
-    ]
-  }
-]
+const getFlyTogetherSchedule = (): ISchedule => {
+    const parsedFlyTogetherData: DayPilot.EventData[] = flyTogetherData.map(ev => {
+        return {
+            id: ev.id,
+            text: ev.name,
+            description: ev.description,
+            start: convertToDayPilotDate(ev.startTime),
+            end: convertToDayPilotDate(ev.endTime),
+            toolTip: ev.description
+        }
+    }).sort((x,y) => x.start.getTime() - y.start.getTime());
+    return {
+        source: 'Fly Together',
+        color: '#27ae60',
+        events: parsedFlyTogetherData
+    }
+}
