@@ -2,7 +2,7 @@ import { IBoulderingProjectEvent, IFlyTogetherEvent, ISchedule } from "./types";
 // data folder not synced to github, add the file and paste scraped data into it
 import eshData from "./data/esh.json";
 import { DayPilot } from "@daypilot/daypilot-lite-react";
-import { BOULDERING_PROJECT_API_KEY } from "./authinfo";
+import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from "./authinfo";
 
 export const getParsedData = async (): Promise<ISchedule[]> => {
     const boulderingProjectSchedule = await getBoulderingProjectSchedule();
@@ -32,8 +32,7 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
         redirect: "follow"
     };
 
-    const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(
-        "https://widgets.api.prod.tilefive.com/cal?startDT=2024-08-28T04%3A00%3A00.000Z&endDT=2024-09-29T03%3A59%3A59.999Z&locationId=9&page=1&pageSize=50", requestOptions)
+    const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(BOULDERING_PROJECT_URL, requestOptions)
         .then((response) => response.json())
         .then((allEvents) => {
             // get all classes with openings
@@ -69,18 +68,25 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
 }
 
 const getEshSchedule = (): ISchedule => {
-    const parsedEshData: DayPilot.EventData[] = eshData.map(ev => {
+    const dateLimit = new Date();
+    dateLimit.setDate(dateLimit.getDate() + 7);
+    const parsedEshData: DayPilot.EventData[] = eshData.filter(ev => {
+        if (ev.HasPassed || ev.AttendanceString === 'Full') {
+            return false;
+        }
+        return new Date(ev.start) <= dateLimit;
+    }).map(ev => {
         return {
-            id: ev.id,
-            text: ev.name.split('-')[0],
-            description: ev.description,
-            start: convertToDayPilotDate(ev.startTime),
-            end: convertToDayPilotDate(ev.endTime),
-            toolTip: ev.description
+            id: ev.SegmentId,
+            text: ev.title.split('-')[0],
+            description: ev.ActivityName,
+            start: convertToDayPilotDate(ev.start),
+            end: convertToDayPilotDate(ev.end),
+            toolTip: ev.ActivityName
         }
     }).sort((x,y) => x.start.getTime() - y.start.getTime());
     return {
-        source: 'Esh',
+        source: 'Esh (MANUAL UPDATE -LAST 8/28)',
         color: '#e74c3c',
         events: parsedEshData
     }
@@ -89,8 +95,7 @@ const getEshSchedule = (): ISchedule => {
 const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
     const dateLimit = new Date();
     dateLimit.setDate(dateLimit.getDate() + 7);
-    const parsedFlyTogetherData: DayPilot.EventData[] = await fetch(
-        'https://readonly-api.momence.com/host-plugins/host/11479/host-schedule/sessions')
+    const parsedFlyTogetherData: DayPilot.EventData[] = await fetch(FLY_TOGETHER_URL)
         .then(response => response.json())
         .then((allEvents) => {
             const eventsOfInterest = allEvents.payload.filter((ev: IFlyTogetherEvent) => {
