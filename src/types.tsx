@@ -16,3 +16,18 @@ export interface IFlyTogetherEvent {
     ticketsSold: number;
     location: string;
 }
+
+export interface IBoulderingProjectEvent {
+    UUID: string;
+    name: string;
+    description: string;
+    ticketsRemaining: number;
+    event: {
+        activitys: {
+            id: number;
+        }[];
+        startTime: string;
+    };
+    cutoffStartDT: Date;
+    endDT: Date;
+}
