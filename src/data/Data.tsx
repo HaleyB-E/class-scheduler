@@ -1,8 +1,8 @@
-import { IBoulderingProjectEvent, IFlyTogetherEvent, ISchedule } from "./types";
+import { IBoulderingProjectEvent, IFlyTogetherEvent, ISchedule } from '../types';
 // data folder not synced to github, add the file and paste scraped data into it
-import eshData from "./data/esh.json";
-import { DayPilot } from "@daypilot/daypilot-lite-react";
-import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from "./authinfo";
+import eshData from './json/esh.json';
+import { DayPilot } from '@daypilot/daypilot-lite-react';
+import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from '../authinfo';
 
 export const getParsedData = async (): Promise<ISchedule[]> => {
     const boulderingProjectSchedule = await getBoulderingProjectSchedule();
@@ -23,13 +23,13 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
     const eventTypeIds = [2, 4, 5, 6];
 
     const myHeaders = new Headers()
-    myHeaders.append("Authorization", "boulderingproject");
-    myHeaders.append("X-Api-Key", BOULDERING_PROJECT_API_KEY);
+    myHeaders.append('Authorization', 'boulderingproject');
+    myHeaders.append('X-Api-Key', BOULDERING_PROJECT_API_KEY);
 
     const requestOptions: RequestInit = {
-        method: "GET",
+        method: 'GET',
         headers: myHeaders,
-        redirect: "follow"
+        redirect: 'follow'
     };
 
     const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(BOULDERING_PROJECT_URL, requestOptions)

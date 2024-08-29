@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, MutableRefObject, useState, useCallback } from 'react';
-import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
-import "./CalendarStyles.css";
+import { DayPilotCalendar } from '@daypilot/daypilot-lite-react';
+import './CalendarStyles.css';
 import Schedule from './Schedule';
-import { getParsedData } from './Data';
+import { getParsedData } from './data/Data';
 import { ISchedule } from './types';
 
 const Calendar = () => {
@@ -28,7 +28,7 @@ const Calendar = () => {
   }, [enabledSchedules])
 
   const calendarConfig = {
-    viewType: "Days" as const,
+    viewType: 'Days' as const,
     days: 7,
     durationBarVisible: false
   };
@@ -44,8 +44,8 @@ const Calendar = () => {
   }, [isScheduleVisible, allSchedules]);
 
   return (
-    <div className="body-wrapper">
-      <div className="schedule-list-wrapper">
+    <div className='body-wrapper'>
+      <div className='schedule-list-wrapper'>
         {allSchedules.map(sch => (
           <Schedule
             data={sch}
@@ -54,7 +54,7 @@ const Calendar = () => {
             setIsVisible={() => toggleScheduleVisibility(sch.source)}/>
         ))}
       </div>
-      <div className="calendar-wrapper">
+      <div className='calendar-wrapper'>
         <DayPilotCalendar
           {...calendarConfig}
           ref={calendarRef}
