@@ -11,7 +11,7 @@ export const getParsedData = async (): Promise<ISchedule[]> => {
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
 
-const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
+export const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
     if (typeof date === 'string') {
         return new DayPilot.Date(new Date(date),true);
     }
@@ -62,7 +62,7 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
 
     return {
         source: 'Bouldering Project',
-        color: '#3498db',
+        color: '#fb8c00',
         events: parsedBoulderingProjectData
     }
 }
@@ -87,7 +87,7 @@ const getEshSchedule = (): ISchedule => {
     }).sort((x,y) => x.start.getTime() - y.start.getTime());
     return {
         source: 'Esh (MANUAL UPDATE -LAST 8/28)',
-        color: '#e74c3c',
+        color: '#e53935',
         events: parsedEshData
     }
 }
@@ -119,7 +119,7 @@ const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
         });
     return {
         source: 'Fly Together',
-        color: '#27ae60',
+        color: '#00897b',
         events: parsedFlyTogetherData
     }
 }
