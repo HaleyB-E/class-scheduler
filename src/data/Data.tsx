@@ -11,7 +11,7 @@ export const getParsedData = async (): Promise<ISchedule[]> => {
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
 
-const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
+export const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
     if (typeof date === 'string') {
         return new DayPilot.Date(new Date(date),true);
     }
@@ -62,8 +62,9 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
 
     return {
         source: 'Bouldering Project',
-        color: '#3498db',
-        events: parsedBoulderingProjectData
+        color: '#fb8c00',
+        events: parsedBoulderingProjectData,
+        scheduleLink: 'https://boulderingproject.portal.approach.app/schedule/embed?locationIds=9%2C'
     }
 }
 
@@ -87,8 +88,9 @@ const getEshSchedule = (): ISchedule => {
     }).sort((x,y) => x.start.getTime() - y.start.getTime());
     return {
         source: 'Esh (MANUAL UPDATE -LAST 8/28)',
-        color: '#e74c3c',
-        events: parsedEshData
+        color: '#e53935',
+        events: parsedEshData,
+        scheduleLink: 'https://app.amilia.com/store/en/eshcircusarts/shop/programs/calendar/106220?view=month&scrollToCalendar=true'
     }
 }
 
@@ -119,7 +121,8 @@ const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
         });
     return {
         source: 'Fly Together',
-        color: '#27ae60',
-        events: parsedFlyTogetherData
+        color: '#00897b',
+        events: parsedFlyTogetherData,
+        scheduleLink: 'https://momence.com/u/flytogetherfitness'
     }
 }

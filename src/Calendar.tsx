@@ -1,18 +1,22 @@
 import React, { useRef, useEffect, MutableRefObject, useState, useCallback } from 'react';
-import { DayPilotCalendar } from '@daypilot/daypilot-lite-react';
+import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-react';
 import './CalendarStyles.css';
 import Schedule from './Schedule';
-import { getParsedData } from './data/Data';
+import { convertToDayPilotDate, getParsedData } from './data/Data';
 import { ISchedule } from './types';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
   const [enabledSchedules, setEnabledSchedules] = useState<string[]>([]);
   const [allSchedules, setAllSchedules] = useState<ISchedule[]>([]);
+  const [days, setDays] = useState(7);
+  const [startDate, setStartDate] = useState(DayPilot.Date.today());
 
   useEffect(() => {
     getParsedData().then(resp => setAllSchedules(resp));
   },[])
+
+  const getCalendar = (): DayPilot.Calendar => calendarRef.current!.control;
 
   const toggleScheduleVisibility = (source: string) => {
     const newArray = enabledSchedules.filter((x) => x !== source)
@@ -23,24 +27,36 @@ const Calendar = () => {
     }
   }
 
+  // swap between day and week view, focusing on the clicked day
+  const onHeaderClicked = (h: {column: DayPilot.CalendarColumnData}) => {
+    if (days === 7) {
+      setStartDate(convertToDayPilotDate(h.column.name));
+      setDays(1);
+    } else {
+      setStartDate(DayPilot.Date.today());
+      setDays(7);
+    }
+  }
+
+  const onEventClicked = (c: {e: DayPilot.Event}) => window.open(c.e.data.tags,'_blank');
+
   const isScheduleVisible = useCallback((source: string) => {
     return enabledSchedules.findIndex(sc => sc === source) >= 0;
   }, [enabledSchedules])
 
   const calendarConfig = {
     viewType: 'Days' as const,
-    days: 7,
-    durationBarVisible: false
+    durationBarVisible: false,
   };
 
   useEffect(() => {
     const visibleSchedules = allSchedules.filter(sch => isScheduleVisible(sch.source));
 
     const eventList = visibleSchedules.flatMap(sch => {
-      return sch.events.map(ev => {return {...ev, backColor: sch.color}});
+      return sch.events.map(ev => {return {...ev, backColor: sch.color, tags: sch.scheduleLink}});
     });
 
-    calendarRef.current!.control.update({events: eventList});
+    getCalendar().update({events: eventList});
   }, [isScheduleVisible, allSchedules]);
 
   return (
@@ -58,6 +74,10 @@ const Calendar = () => {
         <DayPilotCalendar
           {...calendarConfig}
           ref={calendarRef}
+          onHeaderClicked={onHeaderClicked}
+          onEventClick={onEventClicked}
+          days={days}
+          startDate={startDate}
         />
       </div>
     </div>
