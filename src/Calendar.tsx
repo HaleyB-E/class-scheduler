@@ -62,13 +62,23 @@ const Calendar = () => {
   return (
     <div className='body-wrapper'>
       <div className='schedule-list-wrapper'>
-        {allSchedules.map(sch => (
-          <Schedule
-            data={sch}
-            key={sch.source}
-            isVisible={isScheduleVisible(sch.source)}
-            setIsVisible={() => toggleScheduleVisibility(sch.source)}/>
-        ))}
+        {allSchedules.length === 0 &&
+          <h2>
+            Loading...
+          </h2>
+        }
+        {allSchedules.length > 0 &&
+          <>
+            {allSchedules.map(sch => (
+              <Schedule
+                data={sch}
+                key={sch.source}
+                isVisible={isScheduleVisible(sch.source)}
+                setIsVisible={() => toggleScheduleVisibility(sch.source)}/>
+            ))}
+          </>
+        }
+
       </div>
       <div className='calendar-wrapper'>
         <DayPilotCalendar

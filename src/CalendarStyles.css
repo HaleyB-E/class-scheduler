@@ -1,4 +1,10 @@
-/* adjusting the built-in theme */
+/* create-react-app defaults */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+}
 
 /* calendar event */
 .calendar_default_event_inner {
@@ -37,11 +43,9 @@
     margin: 10px;
 }
 
-.schedule-tile-header {
-    h4 {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
+.schedule-tile-header h4 {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .visibility-toggle-wrapper {
@@ -58,3 +62,4 @@
         text-align: left;
     }
 }
+  
