@@ -27,6 +27,7 @@ const Calendar = () => {
     }
   }
 
+  // swap between day and week view, focusing on the clicked day
   const onHeaderClicked = (h: {column: DayPilot.CalendarColumnData}) => {
     if (days === 7) {
       setStartDate(convertToDayPilotDate(h.column.name));
@@ -36,6 +37,8 @@ const Calendar = () => {
       setDays(7);
     }
   }
+
+  const onEventClicked = (c: {e: DayPilot.Event}) => window.open(c.e.data.tags,'_blank');
 
   const isScheduleVisible = useCallback((source: string) => {
     return enabledSchedules.findIndex(sc => sc === source) >= 0;
@@ -50,7 +53,7 @@ const Calendar = () => {
     const visibleSchedules = allSchedules.filter(sch => isScheduleVisible(sch.source));
 
     const eventList = visibleSchedules.flatMap(sch => {
-      return sch.events.map(ev => {return {...ev, backColor: sch.color}});
+      return sch.events.map(ev => {return {...ev, backColor: sch.color, tags: sch.scheduleLink}});
     });
 
     getCalendar().update({events: eventList});
@@ -72,6 +75,7 @@ const Calendar = () => {
           {...calendarConfig}
           ref={calendarRef}
           onHeaderClicked={onHeaderClicked}
+          onEventClick={onEventClicked}
           days={days}
           startDate={startDate}
         />

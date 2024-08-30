@@ -63,7 +63,8 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
     return {
         source: 'Bouldering Project',
         color: '#fb8c00',
-        events: parsedBoulderingProjectData
+        events: parsedBoulderingProjectData,
+        scheduleLink: 'https://boulderingproject.portal.approach.app/schedule/embed?locationIds=9%2C'
     }
 }
 
@@ -88,7 +89,8 @@ const getEshSchedule = (): ISchedule => {
     return {
         source: 'Esh (MANUAL UPDATE -LAST 8/28)',
         color: '#e53935',
-        events: parsedEshData
+        events: parsedEshData,
+        scheduleLink: 'https://app.amilia.com/store/en/eshcircusarts/shop/programs/calendar/106220?view=month&scrollToCalendar=true'
     }
 }
 
@@ -120,6 +122,7 @@ const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
     return {
         source: 'Fly Together',
         color: '#00897b',
-        events: parsedFlyTogetherData
+        events: parsedFlyTogetherData,
+        scheduleLink: 'https://momence.com/u/flytogetherfitness'
     }
 }
