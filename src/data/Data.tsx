@@ -1,12 +1,10 @@
-import { IBoulderingProjectEvent, IFlyTogetherEvent, ISchedule } from '../types';
-// data folder not synced to github, add the file and paste scraped data into it
-import eshData from './json/esh.json';
+import { IBoulderingProjectEvent, IEshEvent, IFlyTogetherEvent, ISchedule } from '../types';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from '../authinfo';
 
 export const getParsedData = async (): Promise<ISchedule[]> => {
     const boulderingProjectSchedule = await getBoulderingProjectSchedule();
-    const eshSchedule = getEshSchedule();
+    const eshSchedule = await getEshSchedule();
     const flyTogetherSchedule = await getFlyTogetherSchedule();
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
@@ -33,7 +31,7 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
     };
 
     const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(BOULDERING_PROJECT_URL, requestOptions)
-        .then((response) => response.json())
+        .then(response => response.json())
         .then((allEvents) => {
             // get all classes with openings
             const openEvents = allEvents.bookings.filter((ev: IBoulderingProjectEvent) => ev.ticketsRemaining > 0);
@@ -67,29 +65,41 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
     }
 }
 
-const getEshSchedule = (): ISchedule => {
+const getEshSchedule = async (): Promise<ISchedule> => {
     const dateLimit = new Date();
     dateLimit.setDate(dateLimit.getDate() + 7);
-    const parsedEshData: DayPilot.EventData[] = eshData.filter(ev => {
-        if (ev.HasPassed || ev.AttendanceString === 'Full') {
-            return false;
-        }
-        return new Date(ev.start) <= dateLimit;
-    }).map(ev => {
+
+    const eshEvents = await fetch('/esh')
+        .then(response => response.json())
+        .then(allEvents => {
+            // exclude events that are full or have already happened
+            const filteredEvents = allEvents.filter((ev: IEshEvent) => {
+                if (ev.hasPassed || ev.AttendanceString === 'Full') {
+                    return false;
+                }
+                return new Date(ev.start) <= dateLimit;
+            });
+
+            // reformat for DayPilot
+            const mappedEvents = filteredEvents.map((ev: IEshEvent) => {
+                return {
+                    id: ev.SegmentId,
+                    text: ev.title.split('-')[0],
+                    description: ev.ActivityName,
+                    start: convertToDayPilotDate(ev.start),
+                    end: convertToDayPilotDate(ev.end),
+                    toolTip: ev.ActivityName
+                }
+            }).sort((x: { start: DayPilot.Date; },y: { start: DayPilot.Date; })  =>
+                x.start.getTime() - y.start.getTime()
+            );
+            return mappedEvents;
+        });
         return {
-            id: ev.SegmentId,
-            text: ev.title.split('-')[0],
-            description: ev.ActivityName,
-            start: convertToDayPilotDate(ev.start),
-            end: convertToDayPilotDate(ev.end),
-            toolTip: ev.ActivityName
+            source: 'Esh',
+            color: '#e74c3c',
+            events: eshEvents
         }
-    }).sort((x,y) => x.start.getTime() - y.start.getTime());
-    return {
-        source: 'Esh (MANUAL UPDATE -LAST 8/28)',
-        color: '#e74c3c',
-        events: parsedEshData
-    }
 }
 
 const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
