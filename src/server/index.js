@@ -14,11 +14,11 @@ app.listen(PORT, () => {
 
 app.get('/esh', async (req, res) => {
     const requestOptions = {
-      method: "GET",
+      method: 'GET',
       headers: {
         referer: authinfo.ESH_URL
       },
-      redirect: "follow"
+      redirect: 'follow'
     };
     const resp = await fetch(authinfo.ESH_API_URL, requestOptions)
       .then((response) => response.json())

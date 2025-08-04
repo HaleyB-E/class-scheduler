@@ -3,7 +3,11 @@ import { DayPilot } from '@daypilot/daypilot-lite-react';
 import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from '../authinfo';
 
 export const getParsedData = async (): Promise<ISchedule[]> => {
-    const boulderingProjectSchedule = await getBoulderingProjectSchedule();
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+
+    const boulderingProjectSchedule = await getBoulderingProjectSchedule(startDate, endDate);
     const eshSchedule = await getEshSchedule();
     const flyTogetherSchedule = await getFlyTogetherSchedule();
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
@@ -16,7 +20,7 @@ const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
     return new DayPilot.Date(date);
 }
 
-const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
+const getBoulderingProjectSchedule = async (startDate: Date, endDate: Date): Promise<ISchedule> => {
     //eventTypes = ['Events', 'Climbing Classes', 'Yoga', 'Fitness']
     const eventTypeIds = [2, 4, 5, 6];
 
@@ -30,19 +34,16 @@ const getBoulderingProjectSchedule = async (): Promise<ISchedule> => {
         redirect: 'follow'
     };
 
-    const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(BOULDERING_PROJECT_URL, requestOptions)
+    const dateStringForUrl = `&startDT=${startDate.toISOString()}&endDT=${endDate.toISOString()}`
+    const activityStringForUrl = `&activityId=${eventTypeIds.join('%2C')}`;
+    const bpUrl = BOULDERING_PROJECT_URL + dateStringForUrl + activityStringForUrl;
+    const parsedBoulderingProjectData: DayPilot.EventData[] = await fetch(bpUrl, requestOptions)
         .then(response => response.json())
         .then((allEvents) => {
             // get all classes with openings
             const openEvents = allEvents.bookings.filter((ev: IBoulderingProjectEvent) => ev.ticketsRemaining > 0);
             // apply additional filters
             const eventsOfInterest = openEvents.filter((ev: IBoulderingProjectEvent) => {
-                let filteredByType = ev.event.activitys.filter(ac => {
-                    return !!eventTypeIds.find(i => i === ac.id);
-                });
-                if (filteredByType.length === 0) {
-                    return false;
-                }
                 // before 10AM? madness
                 return parseInt(ev.event.startTime, 10) > 10;
             });
