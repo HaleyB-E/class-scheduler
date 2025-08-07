@@ -4,6 +4,7 @@ export interface ISchedule {
     source: string;
     events: DayPilot.EventData[];
     color: string;
+    scheduleLink: string;
 }
 
 export interface IFlyTogetherEvent {
