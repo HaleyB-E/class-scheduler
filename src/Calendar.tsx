@@ -3,9 +3,9 @@ import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-react';
 import './CalendarStyles.css';
 import Schedule from './Schedule';
 import { convertToDayPilotDate, ISchedule } from './types';
-import { getBoulderingProjectSchedule } from './data/BoulderingProjectSchedule';
-import { getEshSchedule } from './data/EshSchedule';
-import { getFlyTogetherSchedule } from './data/FlyTogetherSchedule';
+import { getBoulderingProjectSchedule } from './getters/BoulderingProjectSchedule';
+import { getEshSchedule } from './getters/EshSchedule';
+import { getFlyTogetherSchedule } from './getters/FlyTogetherSchedule';
 
 const Calendar = () => {
   const calendarRef: MutableRefObject<DayPilotCalendar|null> = useRef(null)
@@ -15,20 +15,21 @@ const Calendar = () => {
   const [startDate, setStartDate] = useState(DayPilot.Date.today());
 
   useEffect(() => {
-    // TODO: make one-by-one loading instead of all at once
-    getParsedData().then(resp => setAllSchedules(resp));
-  },[])
-
-  const getParsedData = async (): Promise<ISchedule[]> => {
     const startDate = new Date();
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
 
-    const boulderingProjectSchedule = await getBoulderingProjectSchedule(startDate, endDate);
-    const eshSchedule = await getEshSchedule(startDate, endDate);
-    const flyTogetherSchedule = await getFlyTogetherSchedule(endDate);
-    return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
-  }
+    getBoulderingProjectSchedule(startDate, endDate).then(resp => 
+      setAllSchedules(prevSchedules => [...prevSchedules, resp])
+    );
+    getEshSchedule(startDate, endDate).then(resp => 
+      setAllSchedules(prevSchedules => [...prevSchedules, resp])
+    );
+    getFlyTogetherSchedule(endDate).then(resp => 
+      setAllSchedules(prevSchedules => [...prevSchedules, resp])
+    );
+
+  },[])
 
   const getCalendar = (): DayPilot.Calendar => calendarRef.current!.control;
 
