@@ -29,6 +29,7 @@ export const getBoulderingProjectSchedule = async (startDate: Date, endDate: Dat
                 // before 10AM? madness
                 return parseInt(ev.event.startTime, 10) > 10;
             });
+            // reformat for DayPilot
             return eventsOfInterest.map((ev: IBoulderingProjectEvent) => {
                 return  {
                     id: ev.UUID,

@@ -37,7 +37,6 @@ const isValidClass = (eshClass: IEshEvent): boolean => {
     return isValid;
 }
 
-
 export const getEshSchedule = async (startDate: Date, endDate: Date): Promise<ISchedule> => {
     const dateStringForUrl = new URLSearchParams();
     dateStringForUrl.append('start', stringifyEshDate(startDate));
