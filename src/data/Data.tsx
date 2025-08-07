@@ -9,7 +9,7 @@ export const getParsedData = async (): Promise<ISchedule[]> => {
 
     const boulderingProjectSchedule = await getBoulderingProjectSchedule(startDate, endDate);
     const eshSchedule = await getEshSchedule(startDate, endDate);
-    const flyTogetherSchedule = await getFlyTogetherSchedule();
+    const flyTogetherSchedule = await getFlyTogetherSchedule(endDate);
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
 
@@ -105,15 +105,13 @@ const getEshSchedule = async (startDate: Date, endDate: Date): Promise<ISchedule
         }
 }
 
-const getFlyTogetherSchedule = async (): Promise<ISchedule> => {
-    const dateLimit = new Date();
-    dateLimit.setDate(dateLimit.getDate() + 7);
+const getFlyTogetherSchedule = async (endDate: Date): Promise<ISchedule> => {
     const parsedFlyTogetherData: DayPilot.EventData[] = await fetch(FLY_TOGETHER_URL)
         .then(response => response.json())
         .then((allEvents) => {
             const eventsOfInterest = allEvents.payload.filter((ev: IFlyTogetherEvent) => {
                 // don't show anything more than a week out
-                if (new Date(ev.startsAt) > dateLimit) {
+                if (new Date(ev.startsAt) > endDate) {
                     return false;
                 }
                 // only show events with capacity at local studio
