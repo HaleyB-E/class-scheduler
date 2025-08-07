@@ -13,6 +13,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/esh', async (req, res) => {
+    const url = `${authinfo.ESH_API_URL}&start=${req.query.start}&end=${req.query.end}`;
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -20,7 +21,7 @@ app.get('/esh', async (req, res) => {
       },
       redirect: 'follow'
     };
-    const resp = await fetch(authinfo.ESH_API_URL, requestOptions)
+    const resp = await fetch(url, requestOptions)
       .then((response) => response.json())
       .catch((error) => console.error(error));
     res.json(resp);

@@ -8,7 +8,7 @@ export const getParsedData = async (): Promise<ISchedule[]> => {
     endDate.setDate(endDate.getDate() + 7);
 
     const boulderingProjectSchedule = await getBoulderingProjectSchedule(startDate, endDate);
-    const eshSchedule = await getEshSchedule();
+    const eshSchedule = await getEshSchedule(startDate, endDate);
     const flyTogetherSchedule = await getFlyTogetherSchedule();
     return [boulderingProjectSchedule, eshSchedule, flyTogetherSchedule];
 }
@@ -66,11 +66,14 @@ const getBoulderingProjectSchedule = async (startDate: Date, endDate: Date): Pro
     }
 }
 
-const getEshSchedule = async (): Promise<ISchedule> => {
-    const dateLimit = new Date();
-    dateLimit.setDate(dateLimit.getDate() + 7);
+const stringifyEshDate = (toFormat: Date): string =>
+    `${toFormat.getFullYear()}-${toFormat.getMonth() + 1}-${toFormat.getDate()}`;
 
-    const eshEvents = await fetch('/esh')
+const getEshSchedule = async (startDate: Date, endDate: Date): Promise<ISchedule> => {
+    const dateStringForUrl = new URLSearchParams();
+    dateStringForUrl.append('start', stringifyEshDate(startDate));
+    dateStringForUrl.append('end', stringifyEshDate(endDate));
+    const eshEvents = await fetch(`/esh?${dateStringForUrl}`)
         .then(response => response.json())
         .then(allEvents => {
             // exclude events that are full or have already happened
@@ -78,9 +81,8 @@ const getEshSchedule = async (): Promise<ISchedule> => {
                 if (ev.hasPassed || ev.AttendanceString === 'Full') {
                     return false;
                 }
-                return new Date(ev.start) <= dateLimit;
+                return new Date(ev.start) <= endDate;
             });
-
             // reformat for DayPilot
             const mappedEvents = filteredEvents.map((ev: IEshEvent) => {
                 return {
