@@ -32,3 +32,13 @@ export interface IBoulderingProjectEvent {
     cutoffStartDT: Date;
     endDT: Date;
 }
+
+export interface IEshEvent {
+    SegmentId: number;
+    title: string;
+    ActivityName: string;
+    hasPassed: boolean;
+    AttendanceString: string;
+    start: Date;
+    end: Date;
+}
