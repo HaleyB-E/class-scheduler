@@ -41,6 +41,7 @@ export interface IEshEvent {
     AttendanceString: string;
     start: Date;
     end: Date;
+    SubCategoryName: string;
 }
 
 // TODO: move to helpers
