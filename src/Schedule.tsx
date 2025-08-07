@@ -1,7 +1,7 @@
 import React from 'react';
 import './CalendarStyles.css';
 import { ISchedule } from './types';
-import { Accordion, AccordionDetails, AccordionSummary, Grid2, Switch} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Switch} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const Schedule = ({data, isVisible, setIsVisible}: {data: ISchedule, isVisible: boolean, setIsVisible: () => void}) => {
@@ -10,16 +10,16 @@ const Schedule = ({data, isVisible, setIsVisible}: {data: ISchedule, isVisible: 
   }
 
   return (
-    <Grid2 container>
-      <Grid2 className='visibility-toggle-wrapper' size={1}>
+    <Grid container>
+      <Grid className='visibility-toggle-wrapper' size={1}>
         <Switch
           className='visibility-toggle'
           checked={isVisible}
           onChange={setIsVisible}
           name={data.source}
         />
-      </Grid2>
-      <Grid2 size={11}>      
+      </Grid>
+      <Grid size={11}>      
         <Accordion
           disableGutters
           className='schedule-tile'
@@ -41,8 +41,8 @@ const Schedule = ({data, isVisible, setIsVisible}: {data: ISchedule, isVisible: 
             </ul>
           </AccordionDetails>
         </Accordion>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 }
 

@@ -1,6 +1,6 @@
 import { IBoulderingProjectEvent, IEshEvent, IFlyTogetherEvent, ISchedule } from '../types';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
-import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from '../authinfo';
+import { BOULDERING_PROJECT_API_KEY, BOULDERING_PROJECT_URL, FLY_TOGETHER_URL } from '../authinfo.js'
 
 export const getParsedData = async (): Promise<ISchedule[]> => {
     const startDate = new Date();
