@@ -42,3 +42,11 @@ export interface IEshEvent {
     start: Date;
     end: Date;
 }
+
+// TODO: move to helpers
+export const convertToDayPilotDate = (date: string | Date): DayPilot.Date => {
+    if (typeof date === 'string') {
+        return new DayPilot.Date(new Date(date),true);
+    }
+    return new DayPilot.Date(date);
+}
